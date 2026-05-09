@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RunFuerza</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="RunFuerza">
+  <meta name="theme-color" content="#0d0d0d">
+
+  <!-- Icons -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230d0d0d'/%3E%3Ctext y='62' x='50' text-anchor='middle' font-size='58' font-family='Arial Black,sans-serif' fill='%23c8f542'%3E🏃%3C/text%3E%3C/svg%3E">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230d0d0d'/%3E%3Ctext y='62' x='50' text-anchor='middle' font-size='58' font-family='Arial Black,sans-serif' fill='%23c8f542'%3E🏃%3C/text%3E%3C/svg%3E">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ── HOME SCREEN ── -->
+  <div id="home" class="screen active">
+    <div class="home-hero">
+      <div class="logo">Run<span>Fuerza</span></div>
+      <div class="tagline">Tu sesión. Siempre distinta.</div>
+    </div>
+    <div class="home-body">
+
+      <div>
+        <div class="section-label">¿Cuál es el enfoque de hoy?</div>
+        <div class="enfoque-grid" id="enfoqueGrid"></div>
+      </div>
+
+      <div>
+        <div class="section-label">¿Cuánto tiempo tienes?</div>
+        <div class="tiempo-pills">
+          <div class="tiempo-pill" data-min="15" onclick="selectTiempo(this)">
+            <span class="min">15</span>
+            <span class="label">min</span>
+          </div>
+          <div class="tiempo-pill" data-min="30" onclick="selectTiempo(this)">
+            <span class="min">30</span>
+            <span class="label">min</span>
+          </div>
+          <div class="tiempo-pill" data-min="45" onclick="selectTiempo(this)">
+            <span class="min">45</span>
+            <span class="label">min</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-generar" id="btnGenerar" onclick="generarSesion()" disabled>
+        GENERAR SESIÓN →
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ── SESSION SCREEN ── -->
+  <div id="session" class="screen">
+    <div class="session-header">
+      <div class="btn-back" onclick="showScreen('home')">←</div>
+      <div class="session-meta">
+        <div class="session-enfoque" id="sessionTitle">—</div>
+        <div class="session-info" id="sessionInfo">—</div>
+      </div>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar">
+        <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+      </div>
+      <div class="progress-label" id="progressLabel">0 / 0 completados</div>
+    </div>
+    <div class="session-body" id="sessionBody"></div>
+    <button class="btn-session-done" id="btnDone" onclick="showComplete()">¡SESIÓN COMPLETA! 🎉</button>
+  </div>
+
+  <!-- ── COMPLETE SCREEN ── -->
+  <div id="complete" class="screen">
+    <div class="complete-icon">🏆</div>
+    <div class="complete-title">BIEN<span>HECHO</span></div>
+    <p style="color:var(--muted);font-size:14px;max-width:260px;">Ya sumaste una sesión más. El running te lo va a agradecer.</p>
+    <div class="complete-stats">
+      <div class="stat-box">
+        <div class="stat-num" id="statEj">—</div>
+        <div class="stat-label">Ejercicios</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="statMin">—</div>
+        <div class="stat-label">Minutos</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="statSem">—</div>
+        <div class="stat-label">Esta semana</div>
+      </div>
+    </div>
+    <button class="btn-nueva" onclick="nuevaSesion()">NUEVA SESIÓN →</button>
+  </div>
+
+  <!-- Scripts — orden importa: datos primero, lógica después -->
+  <script src="data/ejercicios.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
