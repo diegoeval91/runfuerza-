@@ -7,6 +7,7 @@
 /* ──────────────────────────────────────────
    STATE
    ────────────────────────────────────────── */
+let wakeLock = null;
 const state = {
   enfoque: null,
   tiempo: null,
@@ -361,7 +362,10 @@ function showScreen(id) {
   document.getElementById(id).classList.add('active');
 
   // Detener todos los timers al salir de sesión
-  if (id !== 'session') {
+  if (id === 'session') {
+    activarWakeLock();
+  } else {
+    liberarWakeLock();
     Object.keys(state.timers).forEach(tid => stopTimer(tid));
   }
 }
@@ -434,4 +438,18 @@ function nuevaSesion() {
 /* ──────────────────────────────────────────
    START
    ────────────────────────────────────────── */
+async function activarWakeLock() {
+  try {
+    wakeLock = await navigator.wakeLock.request('screen');
+  } catch (err) {
+    // El dispositivo no soporta Wake Lock o está en modo ahorro
+  }
+}
+
+function liberarWakeLock() {
+  if (wakeLock) {
+    wakeLock.release();
+    wakeLock = null;
+  }
+}
 init();
