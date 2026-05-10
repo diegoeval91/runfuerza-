@@ -136,3 +136,238 @@ const EJERCICIOS = {
     { name: 'Hip Thrust a una pierna',            badge: '3×10/lado',  desc: 'Puente de glúteo elevando una pierna estirada. La estabilidad del core debe mantener la cadera nivelada. Clave para runners.', tag: 'Glúteos · Core' },
   ],
 };
+
+/* ──────────────────────────────────────────
+   MENTE — Respiración, Meditación, Yoga, Relajación
+   ────────────────────────────────────────── */
+
+const ENFOQUES_MENTE = [
+  { id: 'respiracion', name: 'Respiración', icon: '🌬️', desc: 'Control del aliento y energía', color: '#42f5c8' },
+  { id: 'meditacion',  name: 'Meditación',  icon: '🧘', desc: 'Atención plena paso a paso',    color: '#c8a4f5' },
+  { id: 'yoga',        name: 'Yoga',        icon: '🌿', desc: 'Secuencias accesibles en suelo', color: '#7ad97a' },
+  { id: 'relajacion',  name: 'Relajación',  icon: '🌙', desc: 'Bajar revoluciones y recuperar', color: '#f5d442' },
+];
+
+const TIEMPOS_MENTE = [7, 15, 25];
+
+const PRACTICAS_MENTE = {
+
+  respiracion: {
+    7: {
+      name: 'Box Breathing',
+      ciclos: '8 ciclos',
+      intro: 'Inhala 4s → Sostén 4s → Exhala 4s → Sostén 4s. Repite 8 veces. Ideal para pausas laborales o antes de entrenar.',
+      pasos: [
+        { texto: 'Siéntate cómodo, espalda recta. Cierra los ojos o baja la mirada.', duracion: 20 },
+        { texto: 'Inhala lentamente por la nariz contando 4 segundos.', duracion: 4 },
+        { texto: 'Sostén el aire contando 4 segundos.', duracion: 4 },
+        { texto: 'Exhala por la boca contando 4 segundos.', duracion: 4 },
+        { texto: 'Sostén vacío contando 4 segundos. Repite desde el paso 2.', duracion: 4 },
+      ],
+    },
+    15: {
+      name: 'Box Breathing',
+      ciclos: '18 ciclos',
+      intro: 'La misma técnica cuadrada pero con más repeticiones. Perfecto para calmar la mente antes de una sesión larga.',
+      pasos: [
+        { texto: 'Siéntate cómodo, espalda recta. Cierra los ojos.', duracion: 20 },
+        { texto: 'Inhala lentamente por la nariz contando 4 segundos.', duracion: 4 },
+        { texto: 'Sostén el aire contando 4 segundos.', duracion: 4 },
+        { texto: 'Exhala por la boca contando 4 segundos.', duracion: 4 },
+        { texto: 'Sostén vacío contando 4 segundos. Repite desde el paso 2.', duracion: 4 },
+      ],
+    },
+    25: {
+      name: 'Box Breathing',
+      ciclos: '30 ciclos',
+      intro: 'Versión extendida. A este ritmo la mente entra en un estado de calma profunda. No te apures.',
+      pasos: [
+        { texto: 'Siéntate cómodo, espalda recta. Cierra los ojos.', duracion: 20 },
+        { texto: 'Inhala lentamente por la nariz contando 4 segundos.', duracion: 4 },
+        { texto: 'Sostén el aire contando 4 segundos.', duracion: 4 },
+        { texto: 'Exhala por la boca contando 4 segundos.', duracion: 4 },
+        { texto: 'Sostén vacío contando 4 segundos. Repite desde el paso 2.', duracion: 4 },
+      ],
+    },
+
+    respiracion_478_7: {
+      name: 'Respiración 4-7-8',
+      ciclos: '6 ciclos',
+      intro: 'Inhala 4s → Sostén 7s → Exhala 8s. Activa el sistema nervioso parasimpático. Ideal para bajar el pulso.',
+      pasos: [
+        { texto: 'Tumbado o sentado. Coloca la punta de la lengua detrás de los dientes superiores.', duracion: 20 },
+        { texto: 'Inhala silenciosamente por la nariz contando 4 segundos.', duracion: 4 },
+        { texto: 'Sostén el aire contando 7 segundos.', duracion: 7 },
+        { texto: 'Exhala completamente por la boca con un suave sonido, contando 8 segundos.', duracion: 8 },
+        { texto: 'Repite desde el paso 2.', duracion: 3 },
+      ],
+    },
+  },
+
+  meditacion: {
+    7: {
+      name: 'Mindfulness básico',
+      ciclos: '7 min',
+      intro: 'Foco en la respiración. Cuando la mente se vaya, vuelves sin juzgarte. Eso es todo. No hay forma de hacerlo mal.',
+      pasos: [
+        { texto: 'Siéntate con la espalda recta. Manos sobre las rodillas. Cierra los ojos.', duracion: 30 },
+        { texto: 'Respira normal. Nota el aire entrando por la nariz. Solo observa, no controles.', duracion: 60 },
+        { texto: 'Si la mente se fue a otro lado, está bien. Solo vuelve suavemente a la respiración.', duracion: 60 },
+        { texto: 'Siente el pecho o el abdomen subir y bajar. Ancla tu atención ahí.', duracion: 90 },
+        { texto: 'Sigue respirando. Cada vez que te distraigas, vuelves. Sin frustración.', duracion: 90 },
+        { texto: 'Lleva atención a todo tu cuerpo brevemente. ¿Cómo estás ahora mismo?', duracion: 40 },
+        { texto: 'Respira profundo, mueve los dedos, abre los ojos despacio.', duracion: 30 },
+      ],
+    },
+    15: {
+      name: 'Escaneo corporal',
+      ciclos: '15 min',
+      intro: 'Atención progresiva desde los pies hasta la cabeza. Ideal cuando la mente no para — le das algo concreto en qué enfocarse.',
+      pasos: [
+        { texto: 'Tumbado boca arriba, brazos a los costados, ojos cerrados. Respira profundo 3 veces.', duracion: 30 },
+        { texto: 'Lleva tu atención a los pies. ¿Sientes tensión, calor, hormigueo? Solo observa.', duracion: 90 },
+        { texto: 'Sube a las pantorrillas y espinillas. Suéltalas conscientemente con cada exhala.', duracion: 90 },
+        { texto: 'Rodillas y muslos. Si hay tensión, respira hacia allí y deja que se disuelva.', duracion: 90 },
+        { texto: 'Cadera y glúteos. Zona que acumula mucha tensión en runners. Suelta.', duracion: 90 },
+        { texto: 'Abdomen y espalda baja. Permite que se expanda con cada inhalación.', duracion: 90 },
+        { texto: 'Pecho y espalda alta. Nota el ritmo del corazón si puedes.', duracion: 90 },
+        { texto: 'Hombros, brazos, manos. Déjalos caer pesados hacia el suelo.', duracion: 90 },
+        { texto: 'Cuello, mandíbula, rostro. Suelta la tensión de los ojos y la frente.', duracion: 90 },
+        { texto: 'Todo el cuerpo relajado. Quédate aquí unos momentos. Respira libremente.', duracion: 60 },
+        { texto: 'Mueve suavemente los dedos, estira, abre los ojos despacio.', duracion: 30 },
+      ],
+    },
+    25: {
+      name: 'Visualización de carrera',
+      ciclos: '25 min',
+      intro: 'Te imaginas corriendo tu próxima ruta con todos los sentidos. Los atletas de élite usan esto. Es entrenamiento mental real.',
+      pasos: [
+        { texto: 'Siéntate o túmbate cómodo. Cierra los ojos. Respira profundo 5 veces.', duracion: 40 },
+        { texto: 'Imagina que estás en el punto de partida de tu ruta favorita. ¿Qué ves? ¿Qué hueles? ¿Qué temperatura hace?', duracion: 120 },
+        { texto: 'Comienzas a correr. Siente tus pies tocando el suelo. El ritmo de tu respiración. Estás bien.', duracion: 120 },
+        { texto: 'Llega un momento difícil — la cuesta, el kilómetro duro. Sientes el esfuerzo pero sigues. Tu mente está fuerte.', duracion: 150 },
+        { texto: 'Superas el punto difícil. El cuerpo encuentra su ritmo. Te sientes fluido, ligero.', duracion: 120 },
+        { texto: 'Estás en los últimos kilómetros. Ves la meta. Tu cuerpo da todo. Te sientes orgulloso.', duracion: 150 },
+        { texto: 'Cruzas. Respira profundo. Siente lo que sientes en ese momento. Grábalo.', duracion: 120 },
+        { texto: 'Vuelve al presente. Respira. Mueve el cuerpo. Abre los ojos. Esa carrera ya está en ti.', duracion: 80 },
+      ],
+    },
+  },
+
+  yoga: {
+    7: {
+      name: 'Despertar — 7 posturas',
+      ciclos: '7 posturas',
+      intro: 'Secuencia suave para activar el cuerpo. Ideal en la mañana o antes de entrenar. Sin experiencia previa necesaria.',
+      pasos: [
+        { texto: '🏔️ Montaña: De pie, pies juntos, brazos a los costados. Respira profundo y siente el suelo. 5 respiraciones.', duracion: 40 },
+        { texto: '🙌 Brazos al cielo: Inhala y sube los brazos. Mira hacia arriba. Estira toda la columna. 5 respiraciones.', duracion: 40 },
+        { texto: '🙇 Flexión hacia adelante: Exhala y dobla el torso. Rodillas levemente flexionadas. Cuelga. 5 respiraciones.', duracion: 40 },
+        { texto: '🐕 Perro boca abajo: Manos al suelo, camina los pies atrás. Cadera arriba. Talones hacia el suelo. 5 respiraciones.', duracion: 40 },
+        { texto: '🐍 Cobra: Baja al suelo, manos bajo los hombros. Empuja el pecho hacia arriba. Codos semi-flexionados. 5 respiraciones.', duracion: 40 },
+        { texto: '🧒 Postura del niño: Siéntate sobre los talones, estira los brazos al frente, frente al suelo. Suelta todo. 8 respiraciones.', duracion: 55 },
+        { texto: '⭐ Savasana: Tumbado boca arriba, brazos a los costados. No hagas nada. Solo respira y siente.', duracion: 45 },
+      ],
+    },
+    15: {
+      name: "Runner's Yoga — 15 posturas",
+      ciclos: '15 posturas',
+      intro: 'Secuencia diseñada para lo que más sufre corriendo: cadera, isquiotibiales y espalda baja. Tómate el tiempo en cada postura.',
+      pasos: [
+        { texto: '🏔️ Montaña: De pie, pies a ancho de cadera. Respira y enraíza. 4 respiraciones.', duracion: 35 },
+        { texto: '☀️ Saludo al sol A: Brazos arriba → flexión → medio levantamiento → plancha → cobra → perro boca abajo. Fluye.', duracion: 60 },
+        { texto: '⚔️ Guerrero I: Pie derecho adelante, pie izquierdo atrás en diagonal. Brazos arriba. Rodilla delantera a 90°. 5 respiraciones. Repite otro lado.', duracion: 70 },
+        { texto: '⚔️ Guerrero II: Desde Guerrero I, abre los brazos paralelos al suelo. Mira la mano delantera. 5 respiraciones. Repite otro lado.', duracion: 70 },
+        { texto: '📐 Triángulo: Piernas abiertas, inclina el torso hacia la pierna delantera. Mano al tobillo o suelo. Otro brazo al cielo. 5 resp. cada lado.', duracion: 70 },
+        { texto: '🏹 Estocada baja: Rodilla trasera en el suelo. Cadera hacia adelante. Abre el flexor de cadera. 6 respiraciones cada lado.', duracion: 80 },
+        { texto: '🕊️ Paloma: Desde cuadrupedia, rodilla derecha hacia la mano derecha. Extiende la pierna izquierda atrás. Inclínate. 8 resp. cada lado.', duracion: 100 },
+        { texto: '🐕 Perro boca abajo: Cadera al cielo, talones al suelo. Pedalea los pies para soltar pantorrillas.', duracion: 45 },
+        { texto: '📋 Tabla: Plancha alta. Cuerpo recto. Activa el abdomen. 5 respiraciones.', duracion: 40 },
+        { texto: '🐍 Cobra: Manos bajo hombros. Pecho arriba. Codos semi-flexionados. 5 respiraciones.', duracion: 40 },
+        { texto: '🌀 Torsión en suelo: Tumbado, rodilla derecha al pecho, crúzala al lado izquierdo. Brazo derecho extendido. 6 resp. cada lado.', duracion: 80 },
+        { texto: '🌉 Puente: Tumbado, pies apoyados, eleva la cadera. Activa glúteos. 8 respiraciones.', duracion: 55 },
+        { texto: '🤗 Rodillas al pecho: Abraza ambas rodillas. Rueda suave de lado a lado. Masajea la espalda baja.', duracion: 40 },
+        { texto: '🌀 Torsión supina: Tumbado, lleva ambas rodillas al pecho y déjalas caer a un lado. Abre los brazos. 6 resp. cada lado.', duracion: 75 },
+        { texto: '⭐ Savasana: Tumbado, completamente inmóvil. Deja que el cuerpo absorba la práctica. 2 minutos.', duracion: 120 },
+      ],
+    },
+    25: {
+      name: 'Yoga completo — Mente y cuerpo',
+      ciclos: 'Flujo completo',
+      intro: 'Combina respiración consciente, movimiento y relajación. Más tiempo en cada postura para ir más profundo.',
+      pasos: [
+        { texto: '🌬️ Respiración inicial: Sentado, 10 respiraciones profundas. Inhala 4s, exhala 6s. Llega al momento presente.', duracion: 120 },
+        { texto: '🏔️ Montaña: De pie. Escanea tu cuerpo de pies a cabeza. ¿Dónde hay tensión hoy?', duracion: 50 },
+        { texto: '☀️ Saludo al sol A × 3: Fluye tres veces seguidas conectando movimiento y respiración.', duracion: 120 },
+        { texto: '⚔️ Guerrero I y II: Secuencia completa en cada lado. Tómate 6 respiraciones en cada postura.', duracion: 120 },
+        { texto: '🏹 Estocada baja profunda: Rodilla trasera en suelo, ambos brazos arriba. Abre la cadera. 8 resp. cada lado.', duracion: 100 },
+        { texto: '📐 Triángulo + Pirámide: Triángulo 6 resp. luego flexión hacia la pierna. Cada lado.', duracion: 100 },
+        { texto: '🕊️ Paloma larga: La postura más importante para runners. Quédate 10 respiraciones en cada lado. Suelta.', duracion: 140 },
+        { texto: '🐕 Perro boca abajo: Recupera. Pedalea, mueve la cadera. Vuelve a centrar.', duracion: 50 },
+        { texto: '🌀 Torsiones en suelo: Ambos lados. Siente la columna alargarse con cada exhala.', duracion: 100 },
+        { texto: '🌉 Puente + variación una pierna: Puente estándar 6 resp, luego eleva una pierna. Cada lado.', duracion: 100 },
+        { texto: '🧒 Postura del niño: Descansa. Brazos extendidos o a los costados. 10 respiraciones.', duracion: 75 },
+        { texto: '🤗 Rodillas al pecho: Masajea la espalda baja rodando suave.', duracion: 45 },
+        { texto: '⭐ Savasana: Tumbado completamente quieto. 3-4 minutos. No hagas nada. Solo sé.', duracion: 220 },
+      ],
+    },
+  },
+
+  relajacion: {
+    7: {
+      name: 'Respiración y naturaleza',
+      ciclos: '7 min',
+      intro: 'Combina respiración lenta con visualizar un lugar tranquilo. Ideal para pausas laborales o cuando necesitas resetear.',
+      pasos: [
+        { texto: 'Cierra los ojos. Respira profundo 3 veces. Suelta cualquier tensión de los hombros.', duracion: 30 },
+        { texto: 'Imagina un lugar natural que te genere paz. Puede ser real o inventado. Un bosque, el mar, una montaña.', duracion: 45 },
+        { texto: 'Inhala 4s imaginando que respiras el aire de ese lugar. Exhala 6s soltando el estrés.', duracion: 90 },
+        { texto: 'Siente la temperatura, los sonidos, la textura del suelo bajo tus pies en ese lugar.', duracion: 75 },
+        { texto: 'Sigue respirando lento. Estás seguro, tranquilo, en paz. No hay nada que resolver ahora.', duracion: 75 },
+        { texto: 'Lleva una mano al pecho. Siente tu ritmo cardíaco. Agradécele al cuerpo.', duracion: 45 },
+        { texto: 'Respira profundo. Mueve los dedos. Abre los ojos despacio. Trae esa calma contigo.', duracion: 30 },
+      ],
+    },
+    15: {
+      name: 'Relajación muscular progresiva',
+      ciclos: '15 min',
+      intro: 'Tensas y sueltas cada grupo muscular. Es imposible seguir estresado después de esto. Ideal post-entreno o antes de dormir.',
+      pasos: [
+        { texto: 'Tumbado boca arriba. Cierra los ojos. Respira profundo 5 veces para entrar en modo reposo.', duracion: 40 },
+        { texto: '🦶 Pies: Aprieta fuerte los dedos del pie durante 5 segundos. Suelta. Siente la diferencia.', duracion: 30 },
+        { texto: '🦵 Pantorrillas: Apunta los pies hacia ti tensando. 5 segundos. Suelta y observa.', duracion: 30 },
+        { texto: '🦵 Muslos: Aprieta los cuádriceps fuerte. 5 segundos. Suelta.', duracion: 30 },
+        { texto: '🍑 Glúteos: Aprieta fuerte. 5 segundos. Suelta. Siente el peso caer.', duracion: 30 },
+        { texto: '🫁 Abdomen: Contrae el abdomen. 5 segundos. Suelta y permite que se expanda.', duracion: 30 },
+        { texto: '✊ Manos y brazos: Cierra los puños fuerte. 5 segundos. Suelta. Deja los brazos pesados.', duracion: 30 },
+        { texto: '💪 Bíceps: Flexiona los brazos tensando. 5 segundos. Suelta.', duracion: 30 },
+        { texto: '🙆 Hombros: Súbelos hacia las orejas. 5 segundos. Suéltalos de golpe.', duracion: 30 },
+        { texto: '😬 Mandíbula: Aprieta los dientes suave. 5 segundos. Suelta. Deja la boca entreabierta.', duracion: 30 },
+        { texto: '😤 Rostro: Arruga toda la cara. 5 segundos. Suelta y deja el rostro completamente flojo.', duracion: 30 },
+        { texto: 'Todo el cuerpo relajado. Escanea de pies a cabeza. ¿Queda algo de tensión? Suéltalo.', duracion: 90 },
+        { texto: 'Respira libremente. No tienes que hacer nada. Quédate aquí.', duracion: 120 },
+        { texto: 'Cuando estés listo, mueve suavemente los dedos y abre los ojos.', duracion: 30 },
+      ],
+    },
+    25: {
+      name: 'Yoga Nidra',
+      ciclos: '25 min',
+      intro: 'Estado entre el sueño y la vigilia. 20 minutos de Yoga Nidra equivalen a 2 horas de sueño profundo. Solo sigue la voz interior.',
+      pasos: [
+        { texto: 'Tumbado boca arriba. Prepara el espacio. Que nada te interrumpa. Cierra los ojos.', duracion: 30 },
+        { texto: 'Establece tu sankalpa (intención): una frase corta y positiva. Ej: "Estoy en paz" o "Soy suficiente". Repítela 3 veces internamente.', duracion: 60 },
+        { texto: 'Rotación de conciencia — lado derecho: Pulgar → índice → medio → anular → meñique → palma → dorso → muñeca → codo → hombro → axila → costado derecho → cadera → muslo → rodilla → pantorrilla → tobillo → talón → planta → dedos del pie derecho.', duracion: 90 },
+        { texto: 'Rotación de conciencia — lado izquierdo: Repite el mismo recorrido en el lado izquierdo. Ve despacio.', duracion: 90 },
+        { texto: 'Espalda completa: Omóplato derecho → izquierdo → columna vertebral → toda la espalda → glúteos.', duracion: 60 },
+        { texto: 'Frente → cuero cabelludo → rostro completo → garganta → pecho → abdomen. Todo el cuerpo como una unidad.', duracion: 60 },
+        { texto: 'Visualización 1: Imagina un cielo despejado al atardecer. Colores naranjas y rosados. Estás flotando.', duracion: 90 },
+        { texto: 'Visualización 2: Un lago quieto al amanecer. La superficie perfectamente inmóvil. Tú eres ese lago.', duracion: 90 },
+        { texto: 'Visualización 3: Una llama de vela. Quieta. Constante. Cálida. Esa llama eres tú.', duracion: 90 },
+        { texto: 'Vuelve al cuerpo. Siente el peso en el suelo. Escucha los sonidos del ambiente sin reaccionar.', duracion: 60 },
+        { texto: 'Repite tu sankalpa 3 veces. Con convicción. Plántalo en tu subconsciente.', duracion: 45 },
+        { texto: 'Comienza a despertar despacio. Mueve los dedos. Las manos. Los pies. Estira.', duracion: 60 },
+        { texto: 'Rueda hacia un lado. Quédate un momento. Abre los ojos cuando estés listo. No hay prisa.', duracion: 45 },
+      ],
+    },
+  },
+};
