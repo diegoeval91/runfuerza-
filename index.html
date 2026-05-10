@@ -24,40 +24,95 @@
 <body>
 
   <!-- ── HOME SCREEN ── -->
-  <div id="home" class="screen active">
+  <!-- ── LANDING SCREEN ── -->
+  <div id="landing" class="screen active">
     <div class="home-hero">
       <div class="logo">Run<span>Fuerza</span></div>
       <div class="tagline">Tu sesión. Siempre distinta.</div>
     </div>
+    <div class="landing-body">
+      <div class="section-label">¿Qué trabajamos hoy?</div>
+      <div class="landing-grid">
+        <div class="landing-card" onclick="showScreen('home')" style="--card-color: #c8f542">
+          <span class="landing-icon">💪</span>
+          <div class="landing-name">Cuerpo</div>
+          <div class="landing-desc">Fuerza, movilidad y propiocepción</div>
+        </div>
+        <div class="landing-card" onclick="showScreen('mente')" style="--card-color: #c8a4f5">
+          <span class="landing-icon">🧘</span>
+          <div class="landing-name">Mente</div>
+          <div class="landing-desc">Respiración, meditación y yoga</div>
+        </div>
+        <div class="landing-card landing-disabled" style="--card-color: #f5a623">
+          <span class="landing-icon">🥗</span>
+          <div class="landing-name">Alimentación</div>
+          <div class="landing-desc">Próximamente</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- ── HOME (CUERPO) SCREEN ── -->
+  <div id="home" class="screen">
+    <div class="home-hero">
+      <div class="btn-back" onclick="showScreen('landing')" style="margin-bottom:16px">←</div>
+      <div class="logo">Run<span>Fuerza</span></div>
+      <div class="tagline">Sesión de Cuerpo</div>
+    </div>
     <div class="home-body">
-
       <div>
         <div class="section-label">¿Cuál es el enfoque de hoy?</div>
         <div class="enfoque-grid" id="enfoqueGrid"></div>
       </div>
-
       <div>
         <div class="section-label">¿Cuánto tiempo tienes?</div>
         <div class="tiempo-pills">
           <div class="tiempo-pill" data-min="15" onclick="selectTiempo(this)">
-            <span class="min">15</span>
-            <span class="label">min</span>
+            <span class="min">15</span><span class="label">min</span>
           </div>
           <div class="tiempo-pill" data-min="30" onclick="selectTiempo(this)">
-            <span class="min">30</span>
-            <span class="label">min</span>
+            <span class="min">30</span><span class="label">min</span>
           </div>
           <div class="tiempo-pill" data-min="45" onclick="selectTiempo(this)">
-            <span class="min">45</span>
-            <span class="label">min</span>
+            <span class="min">45</span><span class="label">min</span>
           </div>
         </div>
       </div>
-
       <button class="btn-generar" id="btnGenerar" onclick="generarSesion()" disabled>
         GENERAR SESIÓN →
       </button>
-
+    </div>
+  </div>
+  
+  <!-- ── MENTE SCREEN ── -->
+  <div id="mente" class="screen">
+    <div class="home-hero">
+      <div class="btn-back" onclick="showScreen('landing')" style="margin-bottom:16px">←</div>
+      <div class="logo">Run<span>Mente</span></div>
+      <div class="tagline">Respira. Medita. Fluye.</div>
+    </div>
+    <div class="home-body">
+      <div>
+        <div class="section-label">¿Qué practicamos hoy?</div>
+        <div class="enfoque-grid" id="enfoqueGridMente"></div>
+      </div>
+      <div>
+        <div class="section-label">¿Cuánto tiempo tienes?</div>
+        <div class="tiempo-pills">
+          <div class="tiempo-pill" data-min="7" onclick="selectTiempoMente(this)">
+            <span class="min">7</span><span class="label">min</span>
+          </div>
+          <div class="tiempo-pill" data-min="15" onclick="selectTiempoMente(this)">
+            <span class="min">15</span><span class="label">min</span>
+          </div>
+          <div class="tiempo-pill" data-min="25" onclick="selectTiempoMente(this)">
+            <span class="min">25</span><span class="label">min</span>
+          </div>
+        </div>
+      </div>
+      <button class="btn-generar" id="btnGenerarMente" onclick="generarSesionMente()" disabled>
+        COMENZAR PRÁCTICA →
+      </button>
     </div>
   </div>
 
