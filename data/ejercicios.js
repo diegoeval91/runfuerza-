@@ -158,7 +158,6 @@ const PRACTICAS_MENTE = {
       ciclos: '8 ciclos',
       intro: 'Inhala 4s → Sostén 4s → Exhala 4s → Sostén 4s. Repite 8 veces. Ideal para pausas laborales o antes de entrenar.',
       pasos: [
-        { texto: 'Siéntate cómodo, espalda recta. Cierra los ojos o baja la mirada.', duracion: 20 },
         { texto: 'Inhala lentamente por la nariz contando 4 segundos.', duracion: 4 },
         { texto: 'Sostén el aire contando 4 segundos.', duracion: 4 },
         { texto: 'Exhala por la boca contando 4 segundos.', duracion: 4 },
@@ -170,7 +169,6 @@ const PRACTICAS_MENTE = {
       ciclos: '18 ciclos',
       intro: 'La misma técnica cuadrada pero con más repeticiones. Perfecto para calmar la mente antes de una sesión larga.',
       pasos: [
-        { texto: 'Siéntate cómodo, espalda recta. Cierra los ojos.', duracion: 20 },
         { texto: 'Inhala lentamente por la nariz contando 4 segundos.', duracion: 4 },
         { texto: 'Sostén el aire contando 4 segundos.', duracion: 4 },
         { texto: 'Exhala por la boca contando 4 segundos.', duracion: 4 },
@@ -182,7 +180,6 @@ const PRACTICAS_MENTE = {
       ciclos: '30 ciclos',
       intro: 'Versión extendida. A este ritmo la mente entra en un estado de calma profunda. No te apures.',
       pasos: [
-        { texto: 'Siéntate cómodo, espalda recta. Cierra los ojos.', duracion: 20 },
         { texto: 'Inhala lentamente por la nariz contando 4 segundos.', duracion: 4 },
         { texto: 'Sostén el aire contando 4 segundos.', duracion: 4 },
         { texto: 'Exhala por la boca contando 4 segundos.', duracion: 4 },
