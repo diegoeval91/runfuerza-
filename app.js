@@ -428,6 +428,17 @@ function incrementWeeklyCount() {
 /* ──────────────────────────────────────────
    NUEVA SESIÓN — reset
    ────────────────────────────────────────── */
+function volverDesdeSession() {
+  clearInterval(stateMente.interval);
+  clearInterval(stateMente.respiracionInterval);
+  detenerVoz();
+  stateMente.corriendo = false;
+  stateMente.pausado   = false;
+  const titulo = document.getElementById('sessionTitle').textContent;
+  const esMente = ['🌬️', '🧘', '🌿', '🌙'].some(icon => titulo.includes(icon));
+  showScreen(esMente ? 'mente' : 'home');
+}
+
 function nuevaSesion() {
   state.enfoque = null;
   state.tiempo  = null;
