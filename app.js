@@ -587,6 +587,25 @@ function generarSesionMente() {
   const practica = categoria[tiempo];
   if (!practica)  return;
 
+  // Si es respiración, expandir los pasos según los ciclos indicados
+  if (enfoque === 'respiracion') {
+    const ciclosTexto = practica.ciclos; // ej: "8 ciclos"
+    const num = parseInt(ciclosTexto);
+    if (!isNaN(num) && num > 1) {
+      const pasosBase = [...practica.pasos];
+      const pasosExpandidos = [];
+      for (let i = 0; i < num; i++) {
+        pasosBase.forEach(p => pasosExpandidos.push({ ...p }));
+      }
+      practica._pasosExpandidos = pasosExpandidos;
+    } else {
+      practica._pasosExpandidos = [...practica.pasos];
+    }
+    // Usar los pasos expandidos como pasos activos
+    practica._pasosOriginales = practica.pasos;
+    practica.pasos = practica._pasosExpandidos;
+  }
+
   stateMente.practica   = practica;
   stateMente.pasoActual = 0;
   stateMente.corriendo  = false;
