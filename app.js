@@ -613,6 +613,5 @@ function formatTime(secs) {
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
-init(
-   renderEnfoquesMente();
-);
+init();
+renderEnfoquesMente();
