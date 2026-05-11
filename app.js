@@ -432,7 +432,7 @@ function nuevaSesion() {
   document.querySelectorAll('.tiempo-pill').forEach(p => p.classList.remove('selected'));
   document.getElementById('btnGenerar').disabled = true;
 
-  showScreen('home');
+  showScreen('landing');
 }
 
 /* ──────────────────────────────────────────
@@ -454,16 +454,71 @@ function liberarWakeLock() {
 }
 
 /* ──────────────────────────────────────────
-   MENTE — State & lógica
+   AUDIO — Bips sintéticos
+   ────────────────────────────────────────── */
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function beep(frecuencia = 440, duracionMs = 120, volumen = 0.3) {
+  try {
+    const osc     = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    osc.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    osc.frequency.value = frecuencia;
+    osc.type = 'sine';
+    gainNode.gain.setValueAtTime(volumen, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duracionMs / 1000);
+    osc.start(audioCtx.currentTime);
+    osc.stop(audioCtx.currentTime + duracionMs / 1000);
+  } catch(e) {}
+}
+
+function beepTransicion() { beep(660, 200, 0.4); }
+function beepRitmo()      { beep(440, 80,  0.2); }
+function beepFin()        {
+  beep(523, 200, 0.4);
+  setTimeout(() => beep(659, 200, 0.4), 220);
+  setTimeout(() => beep(784, 300, 0.4), 440);
+}
+
+/* ──────────────────────────────────────────
+   VOZ — Web Speech API
+   ────────────────────────────────────────── */
+let vozActiva = true;
+
+function hablar(texto) {
+  if (!vozActiva || !window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(texto);
+  u.lang  = 'es-ES';
+  u.rate  = 0.88;
+  u.pitch = 1.0;
+  window.speechSynthesis.speak(u);
+}
+
+function detenerVoz() {
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+}
+
+/* ──────────────────────────────────────────
+   MENTE — State
    ────────────────────────────────────────── */
 const stateMente = {
-  enfoque: null,
-  tiempo: null,
-  timers: {},
+  enfoque:   null,
+  tiempo:    null,
+  practica:  null,
+  pasoActual: 0,
+  corriendo:  false,
+  pausado:    false,
+  interval:   null,
+  segundosRestantes: 0,
+  respiracionFase: 0,
+  respiracionInterval: null,
 };
 
 function renderEnfoquesMente() {
   const grid = document.getElementById('enfoqueGridMente');
+  if (!grid) return;
   grid.innerHTML = '';
   ENFOQUES_MENTE.forEach(e => {
     const div = document.createElement('div');
@@ -501,14 +556,21 @@ function generarSesionMente() {
   const { enfoque, tiempo } = stateMente;
   const categoria = PRACTICAS_MENTE[enfoque];
   if (!categoria) return;
-
   const practica = categoria[tiempo];
-  if (!practica) return;
+  if (!practica)  return;
+
+  stateMente.practica   = practica;
+  stateMente.pasoActual = 0;
+  stateMente.corriendo  = false;
+  stateMente.pausado    = false;
 
   renderSesionMente(practica, enfoque);
   showScreen('session');
 }
 
+/* ──────────────────────────────────────────
+   MENTE — Render sesión
+   ────────────────────────────────────────── */
 function renderSesionMente(practica, enfoque) {
   const enfoqueData = ENFOQUES_MENTE.find(e => e.id === enfoque);
   document.getElementById('sessionTitle').textContent = `${enfoqueData.icon} ${enfoqueData.name}`;
@@ -523,94 +585,186 @@ function renderSesionMente(practica, enfoque) {
   intro.innerHTML = `<div class="practica-titulo">${practica.name}</div>${practica.intro}`;
   body.appendChild(intro);
 
-  // Phase header
+  // Controles centrales
+  const controles = document.createElement('div');
+  controles.className = 'mente-controles';
+  controles.innerHTML = `
+    <div class="mente-paso-num" id="mentePasoNum">PASO 1 DE ${practica.pasos.length}</div>
+    <div class="mente-texto" id="menteTexto">${practica.pasos[0].texto}</div>
+    <div class="mente-timer-display" id="menteTimer">${formatTime(practica.pasos[0].duracion)}</div>
+    <div class="mente-btns">
+      <button class="btn-mente-voz" id="btnVoz" onclick="toggleVoz()">🔊 Voz</button>
+      <button class="btn-mente-play" id="btnPlayMente" onclick="toggleSesionMente()">▶ COMENZAR</button>
+      <button class="btn-mente-reset" onclick="resetSesionMente()">↺</button>
+    </div>
+  `;
+  body.appendChild(controles);
+
+  // Lista de pasos (referencia visual)
   const phaseHeader = document.createElement('div');
   phaseHeader.className = 'phase-header';
-  phaseHeader.innerHTML = `<div class="phase-tag principal">🧘 PASOS DE LA PRÁCTICA</div><div class="phase-line"></div>`;
+  phaseHeader.innerHTML = `<div class="phase-tag principal">📋 PASOS</div><div class="phase-line"></div>`;
   body.appendChild(phaseHeader);
 
-  // Pasos
-  stateMente.timers = {};
   practica.pasos.forEach((paso, idx) => {
-    const id = `p${idx}`;
-    stateMente.timers[id] = { seconds: paso.duracion, custom: paso.duracion, running: false, interval: null };
-
     const card = document.createElement('div');
-    card.className = 'paso-card';
-    card.id = `card-${id}`;
-    card.style.animationDelay = `${idx * 0.06}s`;
+    card.className = 'paso-card-mini';
+    card.id = `paso-mini-${idx}`;
+    card.style.animationDelay = `${idx * 0.04}s`;
     card.innerHTML = `
-      <div class="paso-num">PASO ${String(idx + 1).padStart(2, '0')}</div>
-      <div class="paso-texto">${paso.texto}</div>
-      <div class="paso-timer">
-        <div class="paso-timer-display" id="timer-${id}">${formatTime(paso.duracion)}</div>
-        <div class="timer-controls">
-          <button class="btn-timer primary" onclick="startStopTimerMente('${id}')">▶</button>
-          <button class="btn-timer" onclick="resetTimerMente('${id}', ${paso.duracion})">↺</button>
-        </div>
-      </div>
+      <span class="paso-mini-num">${String(idx + 1).padStart(2, '0')}</span>
+      <span class="paso-mini-texto">${paso.texto}</span>
+      <span class="paso-mini-tiempo">${formatTime(paso.duracion)}</span>
     `;
     body.appendChild(card);
   });
 
-  // Ocultar botón de completar (no aplica para mente igual que ejercicio)
   document.getElementById('btnDone').classList.remove('visible');
+  actualizarPasoMini(0);
 }
 
-function startStopTimerMente(id) {
-  const t = stateMente.timers[id];
-  if (!t) return;
+function actualizarPasoMini(idx) {
+  document.querySelectorAll('.paso-card-mini').forEach((c, i) => {
+    c.classList.remove('activo', 'completado');
+    if (i < idx)  c.classList.add('completado');
+    if (i === idx) c.classList.add('activo');
+  });
+}
 
-  if (t.running) {
-    clearInterval(t.interval);
-    t.running = false;
-    const btn = document.querySelector(`#card-${id} .btn-timer.primary`);
-    if (btn) btn.textContent = '▶';
+/* ──────────────────────────────────────────
+   MENTE — Flujo automático
+   ────────────────────────────────────────── */
+function toggleSesionMente() {
+  if (!stateMente.corriendo) {
+    iniciarSesionMente();
+  } else if (stateMente.pausado) {
+    reanudarSesionMente();
+  } else {
+    pausarSesionMente();
+  }
+}
+
+function iniciarSesionMente() {
+  // Desbloquear AudioContext (requiere gesto del usuario)
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  stateMente.corriendo = true;
+  stateMente.pausado   = false;
+  document.getElementById('btnPlayMente').textContent = '⏸ PAUSAR';
+  ejecutarPasoMente(stateMente.pasoActual);
+}
+
+function pausarSesionMente() {
+  stateMente.pausado = true;
+  clearInterval(stateMente.interval);
+  clearInterval(stateMente.respiracionInterval);
+  detenerVoz();
+  document.getElementById('btnPlayMente').textContent = '▶ CONTINUAR';
+}
+
+function reanudarSesionMente() {
+  stateMente.pausado = false;
+  document.getElementById('btnPlayMente').textContent = '⏸ PAUSAR';
+  contarPasoMente();
+}
+
+function resetSesionMente() {
+  clearInterval(stateMente.interval);
+  clearInterval(stateMente.respiracionInterval);
+  detenerVoz();
+  stateMente.corriendo  = false;
+  stateMente.pausado    = false;
+  stateMente.pasoActual = 0;
+  const practica = stateMente.practica;
+  document.getElementById('mentePasoNum').textContent  = `PASO 1 DE ${practica.pasos.length}`;
+  document.getElementById('menteTexto').textContent    = practica.pasos[0].texto;
+  document.getElementById('menteTimer').textContent    = formatTime(practica.pasos[0].duracion);
+  document.getElementById('btnPlayMente').textContent  = '▶ COMENZAR';
+  actualizarPasoMini(0);
+}
+
+function ejecutarPasoMente(idx) {
+  const practica = stateMente.practica;
+  if (idx >= practica.pasos.length) {
+    finSesionMente();
     return;
   }
 
-  if (t.seconds <= 0) t.seconds = t.custom;
-  t.running = true;
-  const btn = document.querySelector(`#card-${id} .btn-timer.primary`);
-  if (btn) btn.textContent = '⏸';
+  const paso = practica.pasos[idx];
+  stateMente.pasoActual        = idx;
+  stateMente.segundosRestantes = paso.duracion;
 
-  // Marcar como activo
-  document.getElementById(`card-${id}`).classList.add('activo');
+  // Actualizar UI
+  document.getElementById('mentePasoNum').textContent = `PASO ${idx + 1} DE ${practica.pasos.length}`;
+  document.getElementById('menteTexto').textContent   = paso.texto;
+  document.getElementById('menteTimer').textContent   = formatTime(paso.duracion);
+  actualizarPasoMini(idx);
 
-  t.interval = setInterval(() => {
-    t.seconds--;
-    const disp = document.getElementById(`timer-${id}`);
-    if (disp) disp.textContent = formatTime(t.seconds);
-    if (t.seconds <= 0) {
-      clearInterval(t.interval);
-      t.running = false;
-      document.getElementById(`card-${id}`).classList.remove('activo');
-      document.getElementById(`card-${id}`).classList.add('completado');
-      const b = document.querySelector(`#card-${id} .btn-timer.primary`);
-      if (b) b.textContent = '✓';
-      if (disp) disp.style.color = '#f54242';
-      setTimeout(() => { if (disp) disp.style.color = ''; }, 1500);
+  // Leer el texto en voz alta
+  hablar(paso.texto);
+
+  // Si es respiración, iniciar bips de ritmo
+  clearInterval(stateMente.respiracionInterval);
+  if (stateMente.enfoque === 'respiracion') {
+    iniciarBipsRespiracion(paso);
+  }
+
+  // Scroll al bloque de controles
+  document.getElementById('menteTimer').scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  contarPasoMente();
+}
+
+function contarPasoMente() {
+  clearInterval(stateMente.interval);
+  stateMente.interval = setInterval(() => {
+    stateMente.segundosRestantes--;
+    document.getElementById('menteTimer').textContent = formatTime(stateMente.segundosRestantes);
+
+    if (stateMente.segundosRestantes <= 0) {
+      clearInterval(stateMente.interval);
+      clearInterval(stateMente.respiracionInterval);
+      beepTransicion();
+      setTimeout(() => {
+        ejecutarPasoMente(stateMente.pasoActual + 1);
+      }, 800);
     }
   }, 1000);
 }
 
-function resetTimerMente(id, duracion) {
-  const t = stateMente.timers[id];
-  if (!t) return;
-  clearInterval(t.interval);
-  t.running  = false;
-  t.seconds  = duracion;
-  const disp = document.getElementById(`timer-${id}`);
-  if (disp) { disp.textContent = formatTime(duracion); disp.style.color = ''; }
-  const btn = document.querySelector(`#card-${id} .btn-timer.primary`);
-  if (btn) btn.textContent = '▶';
-  document.getElementById(`card-${id}`).classList.remove('activo', 'completado');
+function finSesionMente() {
+  stateMente.corriendo = false;
+  beepFin();
+  hablar('Práctica completada. Bien hecho.');
+  document.getElementById('btnPlayMente').textContent = '✓ COMPLETADO';
+  document.getElementById('menteTexto').textContent   = '🎉 Práctica completada. Tómate un momento antes de seguir.';
+  document.getElementById('menteTimer').textContent   = '00:00';
+  document.querySelectorAll('.paso-card-mini').forEach(c => {
+    c.classList.remove('activo');
+    c.classList.add('completado');
+  });
 }
 
-function formatTime(secs) {
-  const m = Math.floor(Math.abs(secs) / 60);
-  const s = Math.abs(secs) % 60;
-  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+/* ──────────────────────────────────────────
+   RESPIRACIÓN — Bips por fase
+   ────────────────────────────────────────── */
+function iniciarBipsRespiracion(paso) {
+  // Detecta si el paso tiene duración de fase (4s típico)
+  // Bip al inicio de cada fase
+  const fase = paso.duracion; // duración del paso = duración de una fase
+  if (fase > 10) return; // solo para pasos cortos de respiración
+
+  let tick = 0;
+  stateMente.respiracionInterval = setInterval(() => {
+    tick++;
+    if (tick % fase === 0) beepRitmo();
+  }, 1000);
+}
+
+function toggleVoz() {
+  vozActiva = !vozActiva;
+  const btn = document.getElementById('btnVoz');
+  btn.textContent = vozActiva ? '🔊 Voz' : '🔇 Voz';
+  if (!vozActiva) detenerVoz();
 }
 
 init();
