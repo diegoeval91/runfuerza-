@@ -270,7 +270,7 @@ const PRACTICAS_MENTE = {
       ],
     },
     15: {
-      name: 'Runner's Yoga — 15 posturas',
+      name: `Runner's Yoga — 15 posturas`,
       ciclos: '15 posturas',
       intro: 'Secuencia diseñada para lo que más sufre corriendo: cadera, isquiotibiales y espalda baja. Tómate el tiempo en cada postura.',
       pasos: [
