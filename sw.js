@@ -3,7 +3,7 @@
    Service Worker: permite usar la app offline
    ═══════════════════════════════════════════ */
 
-const CACHE_NAME = 'runfuerza-v1';
+const CACHE_NAME = 'runfuerza-v2';
 
 const ASSETS = [
   '/',
