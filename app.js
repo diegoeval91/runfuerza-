@@ -362,11 +362,17 @@ function showScreen(id) {
   document.getElementById(id).classList.add('active');
 
   // Detener todos los timers al salir de sesión
-  if (id === 'session') {
-    activarWakeLock();
-  } else {
+  if (id !== 'session') {
     liberarWakeLock();
     Object.keys(state.timers).forEach(tid => stopTimer(tid));
+    // Si salimos de sesión, detener flujo de mente
+    if (stateMente.corriendo) {
+      clearInterval(stateMente.interval);
+      clearInterval(stateMente.respiracionInterval);
+      detenerVoz();
+      stateMente.corriendo = false;
+      stateMente.pausado   = false;
+    }
   }
 }
 
@@ -428,11 +434,22 @@ function nuevaSesion() {
   state.ejerciciosActivos = [];
   state.timers  = {};
 
+  stateMente.enfoque   = null;
+  stateMente.tiempo    = null;
+  stateMente.corriendo = false;
+  stateMente.pausado   = false;
+  clearInterval(stateMente.interval);
+  clearInterval(stateMente.respiracionInterval);
+  detenerVoz();
+
   document.querySelectorAll('.enfoque-card').forEach(c => c.classList.remove('selected'));
   document.querySelectorAll('.tiempo-pill').forEach(p => p.classList.remove('selected'));
   document.getElementById('btnGenerar').disabled = true;
 
-  showScreen('landing');
+  // Volver a la pantalla correcta según el módulo activo
+  const titulo = document.getElementById('sessionTitle').textContent;
+  const esMente = ['🌬️', '🧘', '🌿', '🌙'].some(icon => titulo.includes(icon));
+  showScreen(esMente ? 'mente' : 'landing');
 }
 
 /* ──────────────────────────────────────────
@@ -699,19 +716,46 @@ function ejecutarPasoMente(idx) {
   document.getElementById('menteTimer').textContent   = formatTime(paso.duracion);
   actualizarPasoMini(idx);
 
-  // Leer el texto en voz alta
-  hablar(paso.texto);
-
-  // Si es respiración, iniciar bips de ritmo
-  clearInterval(stateMente.respiracionInterval);
-  if (stateMente.enfoque === 'respiracion') {
-    iniciarBipsRespiracion(paso);
-  }
-
   // Scroll al bloque de controles
   document.getElementById('menteTimer').scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-  contarPasoMente();
+  clearInterval(stateMente.respiracionInterval);
+
+  const esRespiracion = stateMente.enfoque === 'respiracion';
+  const esFaseCorta   = paso.duracion <= 10; // fase individual de respiración
+
+  if (esRespiracion && esFaseCorta) {
+    // Modo respiración: voz corta + bips de ritmo
+    const accion = extraerAccion(paso.texto);
+    hablar(accion);
+    // Bip inmediato al inicio de la fase
+    setTimeout(() => beepRitmo(), 600);
+    // Bips cada segundo para mantener el ritmo visual, bip especial al cambiar
+    let tick = 0;
+    stateMente.respiracionInterval = setInterval(() => {
+      tick++;
+      // Bip suave cada segundo
+      if (tick % paso.duracion === 0) {
+        beepTransicion(); // bip de cambio de fase
+      }
+    }, 1000);
+    contarPasoMente();
+  } else {
+    // Modo normal: leer texto completo con delay para que speechSynthesis esté listo
+    setTimeout(() => hablar(paso.texto), idx === 0 ? 600 : 200);
+    contarPasoMente();
+  }
+}
+
+function extraerAccion(texto) {
+  // Extrae solo la palabra clave de acción para la voz en respiración
+  const t = texto.toLowerCase();
+  if (t.includes('inhala'))  return 'Inhala';
+  if (t.includes('sostén') || t.includes('sosten')) return 'Sostén';
+  if (t.includes('exhala'))  return 'Exhala';
+  if (t.includes('suelta'))  return 'Suelta';
+  if (t.includes('repite'))  return 'Repite';
+  return texto.split('.')[0]; // fallback: primera frase
 }
 
 function contarPasoMente() {
@@ -748,16 +792,8 @@ function finSesionMente() {
    RESPIRACIÓN — Bips por fase
    ────────────────────────────────────────── */
 function iniciarBipsRespiracion(paso) {
-  // Detecta si el paso tiene duración de fase (4s típico)
-  // Bip al inicio de cada fase
-  const fase = paso.duracion; // duración del paso = duración de una fase
-  if (fase > 10) return; // solo para pasos cortos de respiración
-
-  let tick = 0;
-  stateMente.respiracionInterval = setInterval(() => {
-    tick++;
-    if (tick % fase === 0) beepRitmo();
-  }, 1000);
+  // Ya manejado dentro de ejecutarPasoMente para respiración
+  // Esta función queda como placeholder
 }
 
 function toggleVoz() {
