@@ -767,5 +767,11 @@ function toggleVoz() {
   if (!vozActiva) detenerVoz();
 }
 
+function formatTime(secs) {
+  const m = Math.floor(Math.abs(secs) / 60);
+  const s = Math.abs(secs) % 60;
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
 init();
 renderEnfoquesMente();
