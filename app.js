@@ -452,4 +452,167 @@ function liberarWakeLock() {
     wakeLock = null;
   }
 }
-init();
+
+/* ──────────────────────────────────────────
+   MENTE — State & lógica
+   ────────────────────────────────────────── */
+const stateMente = {
+  enfoque: null,
+  tiempo: null,
+  timers: {},
+};
+
+function renderEnfoquesMente() {
+  const grid = document.getElementById('enfoqueGridMente');
+  grid.innerHTML = '';
+  ENFOQUES_MENTE.forEach(e => {
+    const div = document.createElement('div');
+    div.className = 'enfoque-card';
+    div.style.setProperty('--card-color', e.color);
+    div.innerHTML = `
+      <span class="enfoque-icon">${e.icon}</span>
+      <div class="enfoque-name">${e.name}</div>
+      <div class="enfoque-desc">${e.desc}</div>
+    `;
+    div.onclick = () => selectEnfoqueMente(e.id, div);
+    grid.appendChild(div);
+  });
+}
+
+function selectEnfoqueMente(id, el) {
+  document.querySelectorAll('#enfoqueGridMente .enfoque-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  stateMente.enfoque = id;
+  checkReadyMente();
+}
+
+function selectTiempoMente(el) {
+  document.querySelectorAll('#mente .tiempo-pill').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+  stateMente.tiempo = parseInt(el.dataset.min);
+  checkReadyMente();
+}
+
+function checkReadyMente() {
+  document.getElementById('btnGenerarMente').disabled = !(stateMente.enfoque && stateMente.tiempo);
+}
+
+function generarSesionMente() {
+  const { enfoque, tiempo } = stateMente;
+  const categoria = PRACTICAS_MENTE[enfoque];
+  if (!categoria) return;
+
+  const practica = categoria[tiempo];
+  if (!practica) return;
+
+  renderSesionMente(practica, enfoque);
+  showScreen('session');
+}
+
+function renderSesionMente(practica, enfoque) {
+  const enfoqueData = ENFOQUES_MENTE.find(e => e.id === enfoque);
+  document.getElementById('sessionTitle').textContent = `${enfoqueData.icon} ${enfoqueData.name}`;
+  document.getElementById('sessionInfo').textContent  = `${stateMente.tiempo} min · ${practica.ciclos}`;
+
+  const body = document.getElementById('sessionBody');
+  body.innerHTML = '';
+
+  // Intro
+  const intro = document.createElement('div');
+  intro.className = 'practica-intro';
+  intro.innerHTML = `<div class="practica-titulo">${practica.name}</div>${practica.intro}`;
+  body.appendChild(intro);
+
+  // Phase header
+  const phaseHeader = document.createElement('div');
+  phaseHeader.className = 'phase-header';
+  phaseHeader.innerHTML = `<div class="phase-tag principal">🧘 PASOS DE LA PRÁCTICA</div><div class="phase-line"></div>`;
+  body.appendChild(phaseHeader);
+
+  // Pasos
+  stateMente.timers = {};
+  practica.pasos.forEach((paso, idx) => {
+    const id = `p${idx}`;
+    stateMente.timers[id] = { seconds: paso.duracion, custom: paso.duracion, running: false, interval: null };
+
+    const card = document.createElement('div');
+    card.className = 'paso-card';
+    card.id = `card-${id}`;
+    card.style.animationDelay = `${idx * 0.06}s`;
+    card.innerHTML = `
+      <div class="paso-num">PASO ${String(idx + 1).padStart(2, '0')}</div>
+      <div class="paso-texto">${paso.texto}</div>
+      <div class="paso-timer">
+        <div class="paso-timer-display" id="timer-${id}">${formatTime(paso.duracion)}</div>
+        <div class="timer-controls">
+          <button class="btn-timer primary" onclick="startStopTimerMente('${id}')">▶</button>
+          <button class="btn-timer" onclick="resetTimerMente('${id}', ${paso.duracion})">↺</button>
+        </div>
+      </div>
+    `;
+    body.appendChild(card);
+  });
+
+  // Ocultar botón de completar (no aplica para mente igual que ejercicio)
+  document.getElementById('btnDone').classList.remove('visible');
+}
+
+function startStopTimerMente(id) {
+  const t = stateMente.timers[id];
+  if (!t) return;
+
+  if (t.running) {
+    clearInterval(t.interval);
+    t.running = false;
+    const btn = document.querySelector(`#card-${id} .btn-timer.primary`);
+    if (btn) btn.textContent = '▶';
+    return;
+  }
+
+  if (t.seconds <= 0) t.seconds = t.custom;
+  t.running = true;
+  const btn = document.querySelector(`#card-${id} .btn-timer.primary`);
+  if (btn) btn.textContent = '⏸';
+
+  // Marcar como activo
+  document.getElementById(`card-${id}`).classList.add('activo');
+
+  t.interval = setInterval(() => {
+    t.seconds--;
+    const disp = document.getElementById(`timer-${id}`);
+    if (disp) disp.textContent = formatTime(t.seconds);
+    if (t.seconds <= 0) {
+      clearInterval(t.interval);
+      t.running = false;
+      document.getElementById(`card-${id}`).classList.remove('activo');
+      document.getElementById(`card-${id}`).classList.add('completado');
+      const b = document.querySelector(`#card-${id} .btn-timer.primary`);
+      if (b) b.textContent = '✓';
+      if (disp) disp.style.color = '#f54242';
+      setTimeout(() => { if (disp) disp.style.color = ''; }, 1500);
+    }
+  }, 1000);
+}
+
+function resetTimerMente(id, duracion) {
+  const t = stateMente.timers[id];
+  if (!t) return;
+  clearInterval(t.interval);
+  t.running  = false;
+  t.seconds  = duracion;
+  const disp = document.getElementById(`timer-${id}`);
+  if (disp) { disp.textContent = formatTime(duracion); disp.style.color = ''; }
+  const btn = document.querySelector(`#card-${id} .btn-timer.primary`);
+  if (btn) btn.textContent = '▶';
+  document.getElementById(`card-${id}`).classList.remove('activo', 'completado');
+}
+
+function formatTime(secs) {
+  const m = Math.floor(Math.abs(secs) / 60);
+  const s = Math.abs(secs) % 60;
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
+init(
+   renderEnfoquesMente();
+);
