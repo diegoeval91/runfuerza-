@@ -43,10 +43,10 @@
           <div class="landing-name">Mente</div>
           <div class="landing-desc">Respiración, meditación y yoga</div>
         </div>
-        <div class="landing-card landing-disabled" style="--card-color: #f5a623">
+        <div class="landing-card" onclick="showScreen('food')" style="--card-color: #f5a623">
           <span class="landing-icon">🥗</span>
           <div class="landing-name">Alimentación</div>
-          <div class="landing-desc">Próximamente</div>
+          <div class="landing-desc">Recetas con propósito</div>
         </div>
       </div>
     </div>
@@ -115,6 +115,43 @@
       </button>
     </div>
   </div>
+
+  <!-- ── FOOD SCREEN ── -->
+<div id="food" class="screen">
+  <div class="home-hero">
+    <div class="btn-back" onclick="showScreen('landing')" style="margin-bottom:16px">←</div>
+    <div class="logo">Pan<span>ta</span></div>
+    <div class="tagline">Come con propósito.</div>
+  </div>
+  <div class="home-body">
+    <div>
+      <div class="section-label">¿Qué estás buscando?</div>
+      <div class="enfoque-grid" id="categoriasFood"></div>
+    </div>
+    <div id="tagsSection" style="display:none">
+      <div class="section-label">Filtrar por (opcional)</div>
+      <div class="tags-grid" id="tagsFood"></div>
+    </div>
+    <button class="btn-generar" id="btnGenerarFood" onclick="generarReceta()" disabled>
+      VER RECETA →
+    </button>
+  </div>
+</div>
+
+<!-- ── RECIPE SCREEN ── -->
+<div id="recipe" class="screen">
+  <div class="session-header">
+    <div class="btn-back" onclick="showScreen('food')">←</div>
+    <div class="session-meta">
+      <div class="session-enfoque" id="recipeTitle">—</div>
+      <div class="session-info" id="recipeInfo">—</div>
+    </div>
+  </div>
+  <div class="session-body" id="recipeBody"></div>
+  <button class="btn-session-done visible" onclick="otraReceta()" style="background:var(--surface);color:var(--text);border:1px solid var(--border);">
+    🔄 OTRA RECETA
+  </button>
+</div>
 
   <!-- ── SESSION SCREEN ── -->
   <div id="session" class="screen">
