@@ -11,6 +11,7 @@ const ASSETS = [
   '/styles.css',
   '/app.js',
   '/data/ejercicios.js',
+  '/data/recetas.js',
   '/manifest.json',
 ];
 
