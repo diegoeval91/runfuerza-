@@ -839,5 +839,140 @@ function formatTime(secs) {
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
+/* ──────────────────────────────────────────
+   ALIMENTACIÓN — State & lógica
+   ────────────────────────────────────────── */
+const stateFood = {
+  categoria: null,
+  tagActivo: null,
+  ultimaReceta: null,
+};
+
+function renderCategoriasFood() {
+  const grid = document.getElementById('categoriasFood');
+  if (!grid) return;
+  grid.innerHTML = '';
+  CATEGORIAS_FOOD.forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'enfoque-card';
+    div.style.setProperty('--card-color', '#f5a623');
+    div.innerHTML = `
+      <span class="enfoque-icon">${c.icon}</span>
+      <div class="enfoque-name">${c.name}</div>
+      <div class="enfoque-desc">${c.desc}</div>
+    `;
+    div.onclick = () => selectCategoriaFood(c.id, div);
+    grid.appendChild(div);
+  });
+
+  renderTagsFood();
+}
+
+function renderTagsFood() {
+  const grid = document.getElementById('tagsFood');
+  if (!grid) return;
+  grid.innerHTML = '';
+  TAGS_FOOD.forEach(tag => {
+    const div = document.createElement('div');
+    div.className = 'tag-pill';
+    div.textContent = tag;
+    div.onclick = () => selectTagFood(tag, div);
+    grid.appendChild(div);
+  });
+}
+
+function selectCategoriaFood(id, el) {
+  document.querySelectorAll('#categoriasFood .enfoque-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  stateFood.categoria = id;
+  document.getElementById('tagsSection').style.display = 'block';
+  checkReadyFood();
+}
+
+function selectTagFood(tag, el) {
+  if (stateFood.tagActivo === tag) {
+    // Deseleccionar si ya estaba activo
+    el.classList.remove('selected');
+    stateFood.tagActivo = null;
+  } else {
+    document.querySelectorAll('.tag-pill').forEach(p => p.classList.remove('selected'));
+    el.classList.add('selected');
+    stateFood.tagActivo = tag;
+  }
+}
+
+function checkReadyFood() {
+  document.getElementById('btnGenerarFood').disabled = !stateFood.categoria;
+}
+
+function generarReceta() {
+  const { categoria, tagActivo, ultimaReceta } = stateFood;
+  let pool = [...(RECETAS[categoria] || [])];
+
+  // Filtrar por tag si hay uno seleccionado
+  if (tagActivo) {
+    const filtrado = pool.filter(r => r.tags.includes(tagActivo));
+    if (filtrado.length > 0) pool = filtrado;
+  }
+
+  // Anti-repetición
+  if (pool.length > 1 && ultimaReceta) {
+    pool = pool.filter(r => r.name !== ultimaReceta);
+  }
+
+  if (pool.length === 0) return;
+
+  const receta = pool[Math.floor(Math.random() * pool.length)];
+  stateFood.ultimaReceta = receta.name;
+
+  renderReceta(receta, categoria);
+  showScreen('recipe');
+}
+
+function otraReceta() {
+  generarReceta();
+}
+
+function renderReceta(receta, categoriaId) {
+  const categoria = CATEGORIAS_FOOD.find(c => c.id === categoriaId);
+  document.getElementById('recipeTitle').textContent = `${categoria.icon} ${receta.name}`;
+  document.getElementById('recipeInfo').textContent  = `⏱ ${receta.tiempo}`;
+
+  const body = document.getElementById('recipeBody');
+  body.innerHTML = '';
+
+  const card = document.createElement('div');
+  card.className = 'recipe-card';
+
+  // Tags
+  const tagsHtml = receta.tags.map(t => `<span class="recipe-tag">${t}</span>`).join('');
+
+  // Ingredientes
+  const ingHtml = receta.ingredientes.map(i =>
+    `<div class="recipe-ingrediente">· ${i}</div>`
+  ).join('');
+
+  // Pasos
+  const pasosHtml = receta.pasos.map((p, i) => `
+    <div class="recipe-paso">
+      <div class="recipe-paso-num">${i + 1}</div>
+      <div class="recipe-paso-texto">${p}</div>
+    </div>
+  `).join('');
+
+  card.innerHTML = `
+    <div class="recipe-tiempo">⏱ ${receta.tiempo}</div>
+    <div class="recipe-tags">${tagsHtml}</div>
+    <div class="recipe-section-title">INGREDIENTES</div>
+    ${ingHtml}
+    <div class="recipe-section-title">PREPARACIÓN</div>
+    ${pasosHtml}
+    <div class="recipe-porque">💡 ${receta.porQue}</div>
+  `;
+
+  body.appendChild(card);
+}
+
 init();
 renderEnfoquesMente();
+renderCategoriasFood();
