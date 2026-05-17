@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════
-   RUNFUERZA — data/ejercicios.js
+   OLIN — data/ejercicios.js
    Pool de ejercicios separado de la lógica.
    Para agregar ejercicios: añade un objeto al
    array correspondiente siguiendo el formato:
