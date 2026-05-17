@@ -11,6 +11,7 @@ let wakeLock = null;
 const state = {
   enfoque: null,
   tiempo: null,
+  grupos: [],
   ejerciciosActivos: [],
   timers: {},
 };
@@ -20,6 +21,7 @@ const state = {
    ────────────────────────────────────────── */
 function init() {
   renderEnfoques();
+  renderGrupos();
   resetWeeklyStatsIfNeeded();
   registerServiceWorker();
 }
@@ -53,10 +55,54 @@ function renderEnfoques() {
   });
 }
 
+const GRUPOS_MUSCULARES = [
+  { id: 'inferior', name: 'Tren Inferior', icon: '🦵', desc: 'Cuádriceps, isquios, glúteos' },
+  { id: 'superior', name: 'Tren Superior', icon: '💪', desc: 'Pecho, espalda, hombros, brazos' },
+  { id: 'core',     name: 'Core',          icon: '🧱', desc: 'Abdomen, lumbar, oblicuos' },
+  { id: 'fullbody', name: 'Full Body',     icon: '🔥', desc: 'Todo el cuerpo' },
+];
+
+function renderGrupos() {
+  const grid = document.getElementById('grupoGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  GRUPOS_MUSCULARES.forEach(g => {
+    const div = document.createElement('div');
+    div.className = 'grupo-pill';
+    div.id = `grupo-${g.id}`;
+    div.innerHTML = `
+      <span class="grupo-pill-icon">${g.icon}</span>
+      <div>
+        <div class="grupo-pill-name">${g.name}</div>
+        <div class="grupo-pill-desc">${g.desc}</div>
+      </div>
+    `;
+    div.onclick = () => toggleGrupo(g.id, div);
+    grid.appendChild(div);
+  });
+}
+
+function toggleGrupo(id, el) {
+  el.classList.toggle('selected');
+  if (state.grupos.includes(id)) {
+    state.grupos = state.grupos.filter(g => g !== id);
+  } else {
+    state.grupos.push(id);
+  }
+}
+
 function selectEnfoque(id, el) {
   document.querySelectorAll('.enfoque-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
   state.enfoque = id;
+  state.grupos = [];
+  document.querySelectorAll('.grupo-pill').forEach(p => p.classList.remove('selected'));
+  document.getElementById('grupoMuscularSection').style.display = 'none';
+
+  // Mostrar selector de grupo solo para Fuerza
+  const seccion = document.getElementById('grupoMuscularSection');
+  seccion.style.display = id === 'fuerza' ? 'block' : 'none';
+
   checkReady();
 }
 
@@ -96,7 +142,38 @@ function generarSesion() {
     });
     mainEjs = shuffle(mainEjs).slice(0, mainCount);
   } else {
-    mainEjs = shuffle([...EJERCICIOS[enfoque]]).slice(0, mainCount);
+    let pool = [...EJERCICIOS[enfoque]];
+
+    // Filtrar por grupo muscular si hay selección (solo en fuerza)
+    if (enfoque === 'fuerza' && state.grupos.length > 0) {
+      const tagMap = {
+        inferior: ['cuádr', 'glúte', 'isquio', 'gemelo', 'sóleo'],
+        superior: ['pecho', 'dorsal', 'hombro', 'bícep', 'trícep', 'trapecio'],
+        core:     ['core', 'oblicu', 'lumbar', 'abdomin'],
+        fullbody: [], // fullbody no filtra, usa todo
+      };
+
+      const usaFullBody = state.grupos.includes('fullbody');
+
+      if (!usaFullBody) {
+        const keywords = state.grupos.flatMap(g => tagMap[g] || []);
+        const filtrado = pool.filter(e =>
+          keywords.some(k => e.tag.toLowerCase().includes(k))
+        );
+        // Si hay suficientes ejercicios filtrados, usar ese pool
+        if (filtrado.length >= mainCount) {
+          pool = filtrado;
+        } else if (filtrado.length > 0) {
+          // Si hay pocos, mezclar filtrados con el pool completo
+          const resto = pool.filter(e =>
+            !keywords.some(k => e.tag.toLowerCase().includes(k))
+          );
+          pool = [...filtrado, ...shuffle(resto)];
+        }
+      }
+    }
+
+    mainEjs = shuffle(pool).slice(0, mainCount);
   }
 
   // Anti-repetición: guarda los últimos usados
@@ -442,6 +519,7 @@ function volverDesdeSession() {
 function nuevaSesion() {
   state.enfoque = null;
   state.tiempo  = null;
+  state.grupos  = [];
   state.ejerciciosActivos = [];
   state.timers  = {};
 
