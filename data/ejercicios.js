@@ -146,6 +146,7 @@ const ENFOQUES_MENTE = [
   { id: 'meditacion',  name: 'Meditación',  icon: '🧘', desc: 'Atención plena paso a paso',    color: '#c8a4f5' },
   { id: 'yoga',        name: 'Yoga',        icon: '🌿', desc: 'Secuencias accesibles en suelo', color: '#7ad97a' },
   { id: 'relajacion',  name: 'Relajación',  icon: '🌙', desc: 'Bajar revoluciones y recuperar', color: '#f5d442' },
+  { id: 'journal',     name: 'Journaling',  icon: '📓', desc: 'Una pregunta. Un momento. Tú.', color: '#f5a623' },
 ];
 
 const TIEMPOS_MENTE = [7, 15, 25];
