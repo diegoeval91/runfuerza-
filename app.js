@@ -77,7 +77,7 @@ function selectEnfoque(id, el) {
 }
 
 function selectTiempo(el) {
-  document.querySelectorAll('.tiempo-pill').forEach(p => p.classList.remove('selected'));
+  document.querySelectorAll('#home .tiempo-pills .tiempo-pill').forEach(p => p.classList.remove('selected'));
   el.classList.add('selected');
   state.tiempo = parseInt(el.dataset.min);
   checkReady();
