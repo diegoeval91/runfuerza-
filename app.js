@@ -133,8 +133,9 @@ function generarSesion() {
       if (pool.length < mainCount) pool = [...EJERCICIOS[enfoque]];
     }
 
-    mainEjs = shuffle(pool).slice(0, mainCount)
-   ;
+    mainEjs = shuffle(pool).slice(0, mainCount);
+  }
+     
 
   // Anti-repetición: guarda los últimos usados
   const lastUsed = getLastUsed();
