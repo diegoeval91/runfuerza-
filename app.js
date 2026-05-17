@@ -637,7 +637,7 @@ function generarJournal() {
 
   document.getElementById('journalTitulo').textContent = `${enfoqueData.icon} ${enfoqueData.name}`;
   document.getElementById('journalFecha').textContent  = fecha;
-  document.getElementById('journalPregunta').textContent  = pregunta;
+  document.getElementById('journalPreguntaTexto').textContent  = pregunta;
   document.getElementById('journalRecuerda').textContent  = recuerdas[categoria];
 
   showScreen('journalPregunta');
