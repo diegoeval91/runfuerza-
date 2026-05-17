@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════
-   RUNFUERZA — app.js
+   OLIN — app.js
    Lógica de la aplicación.
    Depende de: data/ejercicios.js (cargado antes)
    ═══════════════════════════════════════════ */
