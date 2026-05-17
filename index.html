@@ -153,6 +153,51 @@
   </button>
 </div>
 
+  <!-- ── JOURNAL SCREEN ── -->
+<div id="journal" class="screen">
+  <div class="home-hero">
+    <div class="btn-back" onclick="showScreen('mente')" style="margin-bottom:16px">←</div>
+    <div class="logo">Olin<span>Journal</span></div>
+    <div class="tagline">Una pregunta. Un momento. Tú.</div>
+  </div>
+  <div class="home-body">
+    <div>
+      <div class="section-label">¿Sobre qué quieres escribir hoy?</div>
+      <div class="enfoque-grid" id="enfoqueGridJournal"></div>
+    </div>
+    <button class="btn-generar" id="btnGenerarJournal" onclick="generarJournal()" disabled>
+      VER MI PREGUNTA DE HOY →
+    </button>
+  </div>
+</div>
+
+<!-- ── JOURNAL PREGUNTA SCREEN ── -->
+<div id="journalPregunta" class="screen">
+  <div class="session-header">
+    <div class="btn-back" onclick="showScreen('journal')">←</div>
+    <div class="session-meta">
+      <div class="session-enfoque" id="journalTitulo">—</div>
+      <div class="session-info" id="journalFecha">—</div>
+    </div>
+  </div>
+  <div class="journal-body">
+    <div class="journal-card">
+      <div class="journal-label">TU PREGUNTA DE HOY</div>
+      <div class="journal-pregunta" id="journalPregunta">—</div>
+      <div class="journal-hint">
+        📝 Toma tu libreta y escribe lo que surja. No hay respuestas correctas ni incorrectas.
+      </div>
+    </div>
+    <div class="journal-inspiracion">
+      <div class="journal-inspiracion-title">RECUERDA</div>
+      <div class="journal-inspiracion-texto" id="journalRecuerda">—</div>
+    </div>
+  </div>
+  <button class="btn-session-done visible" onclick="showScreen('mente')" style="background:var(--surface);color:var(--text);border:1px solid var(--border);">
+    ← VOLVER A MENTE
+  </button>
+</div>
+  
   <!-- ── SESSION SCREEN ── -->
   <div id="session" class="screen">
     <div class="session-header">
