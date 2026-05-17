@@ -1,6 +1,6 @@
 {
-  "name": "RunFuerza",
-  "short_name": "RunFuerza",
+  "name": "OLIN",
+  "short_name": "OLIN",
   "description": "Sesiones de fuerza, movilidad y propiocepción para runners",
   "start_url": "/",
   "display": "standalone",
