@@ -65,8 +65,21 @@
       <div class="enfoque-grid" id="enfoqueGrid"></div>
     </div>
     <div id="grupoMuscularSection" style="display:none">
-      <div class="section-label">¿Qué grupo muscular? (opcional)</div>
-      <div class="grupo-grid" id="grupoGrid"></div>
+      <div class="section-label">¿Qué quieres trabajar hoy?</div>
+      <div class="tiempo-pills" id="grupoGrid">
+        <div class="tiempo-pill" data-grupo="inferior" onclick="selectGrupo(this)">
+          <span class="min">🦵</span>
+          <span class="label">Tren Inferior</span>
+        </div>
+        <div class="tiempo-pill" data-grupo="superior" onclick="selectGrupo(this)">
+          <span class="min">💪</span>
+          <span class="label">Tren Superior</span>
+        </div>
+        <div class="tiempo-pill" data-grupo="fullbody" onclick="selectGrupo(this)">
+          <span class="min">🔥</span>
+          <span class="label">Full Body</span>
+        </div>
+      </div>
     </div>
       <div>
         <div class="section-label">¿Cuánto tiempo tienes?</div>
