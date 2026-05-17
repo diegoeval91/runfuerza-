@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════
-   PANTA / OLIN — data/recetas.js
+   OLIN — data/recetas.js
    Pool de recetas por categoría con tags.
    Para agregar recetas sigue el formato:
    {
