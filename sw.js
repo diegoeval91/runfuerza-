@@ -1,9 +1,9 @@
 /* ═══════════════════════════════════════════
-   RUNFUERZA — sw.js
+   OLIN — sw.js
    Service Worker: permite usar la app offline
    ═══════════════════════════════════════════ */
 
-const CACHE_NAME = 'runfuerza-v2';
+const CACHE_NAME = 'olin-v1';
 
 const ASSETS = [
   '/',
