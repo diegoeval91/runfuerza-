@@ -566,7 +566,16 @@ function selectEnfoqueMente(id, el) {
   document.querySelectorAll('#enfoqueGridMente .enfoque-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
   stateMente.enfoque = id;
-  checkReadyMente();
+
+  // Si es journaling, ocultar tiempo y habilitar botón directo
+  const tiempoPills = document.querySelector('#mente .tiempo-pills').parentElement;
+  if (id === 'journal') {
+    tiempoPills.style.display = 'none';
+    document.getElementById('btnGenerarMente').disabled = false;
+  } else {
+    tiempoPills.style.display = 'block';
+    checkReadyMente();
+  }
 }
 
 function selectTiempoMente(el) {
@@ -577,6 +586,10 @@ function selectTiempoMente(el) {
 }
 
 function checkReadyMente() {
+  if (stateMente.enfoque === 'journal') {
+    document.getElementById('btnGenerarMente').disabled = false;
+    return;
+  }
   document.getElementById('btnGenerarMente').disabled = !(stateMente.enfoque && stateMente.tiempo);
 }
 
