@@ -580,8 +580,78 @@ function checkReadyMente() {
   document.getElementById('btnGenerarMente').disabled = !(stateMente.enfoque && stateMente.tiempo);
 }
 
+/* ──────────────────────────────────────────
+   JOURNALING
+   ────────────────────────────────────────── */
+const stateJournal = {
+  categoria: null,
+};
+
+function renderEnfoquesJournal() {
+  const grid = document.getElementById('enfoqueGridJournal');
+  if (!grid) return;
+  grid.innerHTML = '';
+  CATEGORIAS_JOURNAL.forEach(e => {
+    const div = document.createElement('div');
+    div.className = 'enfoque-card';
+    div.style.setProperty('--card-color', e.color);
+    div.innerHTML = `
+      <span class="enfoque-icon">${e.icon}</span>
+      <div class="enfoque-name">${e.name}</div>
+      <div class="enfoque-desc">${e.desc}</div>
+    `;
+    div.onclick = () => selectCategoriaJournal(e.id, div);
+    grid.appendChild(div);
+  });
+}
+
+function selectCategoriaJournal(id, el) {
+  document.querySelectorAll('#enfoqueGridJournal .enfoque-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  stateJournal.categoria = id;
+  document.getElementById('btnGenerarJournal').disabled = false;
+}
+
+function generarJournal() {
+  const { categoria } = stateJournal;
+  const pool = PROMPTS_JOURNAL[categoria];
+  if (!pool) return;
+
+  // Pregunta del día: usa la fecha como semilla para que sea la misma todo el día
+  const hoy = new Date();
+  const seed = hoy.getFullYear() * 10000 + (hoy.getMonth() + 1) * 100 + hoy.getDate();
+  const idx  = seed % pool.length;
+  const pregunta = pool[idx];
+
+  // Textos de recordatorio por categoría
+  const recuerdas = {
+    reflexion:   'No hay respuesta correcta. El objetivo es observarte, no juzgarte. Escribe lo primero que venga.',
+    gratitud:    'La gratitud no es fingir que todo está bien. Es notar lo que sí funciona, aunque sea pequeño.',
+    emociones:   'Las emociones no son buenas ni malas. Son información. Escríbelas sin editarlas.',
+    metas:       'No se trata de tener todo claro. Se trata de ser honesto sobre hacia dónde quieres ir.',
+    hipoteticos: 'Permítete jugar. Las respuestas a preguntas absurdas a veces revelan cosas muy reales.',
+  };
+
+  const enfoqueData = CATEGORIAS_JOURNAL.find(e => e.id === categoria);
+  const fecha = hoy.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
+
+  document.getElementById('journalTitulo').textContent = `${enfoqueData.icon} ${enfoqueData.name}`;
+  document.getElementById('journalFecha').textContent  = fecha;
+  document.getElementById('journalPregunta').textContent  = pregunta;
+  document.getElementById('journalRecuerda').textContent  = recuerdas[categoria];
+
+  showScreen('journalPregunta');
+}
+
 function generarSesionMente() {
   const { enfoque, tiempo } = stateMente;
+
+  // Si es journaling, redirigir a su pantalla propia
+  if (enfoque === 'journal') {
+    showScreen('journal');
+    return;
+  }
+
   const categoria = PRACTICAS_MENTE[enfoque];
   if (!categoria) return;
   const practica = categoria[tiempo];
@@ -976,3 +1046,4 @@ function renderReceta(receta, categoriaId) {
 init();
 renderEnfoquesMente();
 renderCategoriasFood();
+renderEnfoquesJournal();
